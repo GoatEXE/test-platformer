@@ -17,17 +17,17 @@ public partial class PlayerMove : State
 	public override void Enter()
 	{
 		GD.Print("Entering Move state.");
+		AnimatedSprite.Play("walk");
 	}
 
 	public override void Exit()
 	{
 		GD.Print("Exiting Move state.");
+		AnimatedSprite.Stop();
 	}
 
 	public override void Update(double delta)
 	{
-		AnimatedSprite.Play("walk");
-
 		AnimatedSprite.FlipH = Player.Velocity.X < 0;
 	}
 
@@ -45,5 +45,14 @@ public partial class PlayerMove : State
 		{
 			Player._velocity.X = 0;
 		}
+
+		if (Input.IsActionJustPressed("jump"))
+		{
+			Player.fsm.TransitionTo("PlayerJump");
+		}
+
+		// Velocity and Move
+		Player.Velocity = Player._velocity;
+		Player.MoveAndSlide();
 	}
 }

@@ -6,11 +6,12 @@ public partial class Player : CharacterBody2D
 	// Movement
 	public Vector2 _velocity = Vector2.Zero;
 	public float Speed = 300.0f;
-	public const float JumpVelocity = -400.0f;
+	public float JumpVelocity = -400.0f;
 
 	// Environment
 	public float Gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
 
+	// Objects
 	public StateMachine fsm;
 
 	public override void _Ready()
@@ -22,14 +23,14 @@ public partial class Player : CharacterBody2D
 	{
 		Vector2 direction = Input.GetVector("left", "right", "up", "down");
 
-		if (direction != Vector2.Zero)
-		{
-			fsm.TransitionTo("PlayerMove");
-		}
-
-		else if (Input.IsActionJustPressed("jump") && IsOnFloor())
+		if (Input.IsActionJustPressed("jump") && IsOnFloor())
 		{
 			fsm.TransitionTo("PlayerJump");
+		}
+		
+		else if (direction != Vector2.Zero && IsOnFloor())
+		{
+			fsm.TransitionTo("PlayerMove");
 		}
 
 		else if (!IsOnFloor() && Velocity.Y >= 0)
@@ -37,21 +38,10 @@ public partial class Player : CharacterBody2D
 			fsm.TransitionTo("PlayerFall");
 		}
 
-		else
+		else if (IsOnFloor() && fsm._currentState.Name != "PlayerJump")
 		{
 			fsm.TransitionTo("PlayerIdle");
 		}
-	}
-
-	public override void _PhysicsProcess(double delta)
-	{
-		Velocity = _velocity;
-		MoveAndSlide();
-	}
-
-	public void GravityForce(double delta)
-	{
-		_velocity.Y += Gravity * (float)delta;
 	}
 
 	public Vector2 GetVelocityInProcess()

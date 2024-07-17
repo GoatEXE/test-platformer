@@ -16,7 +16,6 @@ public partial class StateMachine : Node
 		{
 			if (node is State state)
 			{
-				GD.Print(node.Name);
 				_states[node.Name] = state;
 				state.fsm = this;
 			}
@@ -33,11 +32,10 @@ public partial class StateMachine : Node
 
 	public override void _PhysicsProcess(double delta)
 	{
-		// GD.Print("State: " + _currentState.Name + " Physics Process Started");
 		_currentState.PhysicsUpdate((float) delta);
 	}
 
-	public void UnhandledInput(InputEvent @event)
+	public override void _UnhandledInput(InputEvent @event)
 	{
 		_currentState.HandleInput(@event);
 	}
@@ -48,6 +46,15 @@ public partial class StateMachine : Node
 		{
 			return;
 		}
+
+		if (_currentState.TimedState == true)
+		{
+			if (_currentState.TimeInState < _currentState.MinTimeInState)
+			{
+				return;
+			}
+		}
+
 
 		_currentState.Exit();
 		_currentState = _states[key];

@@ -16,6 +16,8 @@ public partial class PlayerIdle : State
 	{
 		GD.Print("Entering Idle state.");
 		AnimatedSprite.Play("idle");
+
+		Player._velocity = Vector2.Zero;
 	}
 
 	public override void Exit()

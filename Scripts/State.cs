@@ -5,6 +5,11 @@ public partial class State : Node
 {
     public StateMachine fsm;
 
+    public virtual bool TimedState { get; set; } = false;
+    public virtual float MinTimeInState { get; set; }
+    public virtual float MaxTimeInState { get; set; }
+    public virtual float TimeInState { get; set; }
+
     public virtual void Enter()
     {
     }
