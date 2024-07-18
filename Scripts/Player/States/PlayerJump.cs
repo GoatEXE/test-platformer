@@ -6,11 +6,6 @@ public partial class PlayerJump : State
 	protected Player Player { get; private set; }
 	protected AnimatedSprite2D AnimatedSprite { get; private set; }
 
-	public override bool TimedState { get; set; } = true;
-	public override float MinTimeInState { get; set; } = 0.1f;
-	public override float MaxTimeInState { get; set; } = 0.25f;
-	public override float TimeInState { get; set; } = 0.0f;
-
 	public override void _Ready()
 	{
 		Player = GetParent().GetParent<Player>();
@@ -21,7 +16,9 @@ public partial class PlayerJump : State
 	{
 		GD.Print("Entering Jump state.");
 		AnimatedSprite.Play("jump");
-		TimeInState = 0.0f; 
+
+		// Apply Jump Velocity once when entering the jump state
+		Player._velocity.Y = Player.JumpVelocity; 
 	}
 
 	public override void Exit()
@@ -32,25 +29,27 @@ public partial class PlayerJump : State
 
 	public override void Update(double delta)
 	{
-		AnimatedSprite.FlipH = Player.Velocity.X < 0;
+		// Flip sprite if facing left
+		AnimatedSprite.FlipH = Player._velocity.X < 0;
+
+		// Fall state if at jump apex
+		if (!Player.IsOnFloor() && Player.Velocity.Y >= 0)
+		{
+			fsm.TransitionTo("PlayerFall");
+		}
+
+		// Attack state
+		if (Input.IsActionJustPressed("attack"))
+		{
+			fsm.TransitionTo("PlayerAttack");
+		}
 	}
 	
 	public override void PhysicsUpdate(double delta)
 	{
 		// Apply Gravity
 		GravityForce(delta);
-
-		if (TimeInState < MaxTimeInState)
-		{
-			// Apply Jump Velocity
-			Player._velocity.Y = Player.JumpVelocity;
-			TimeInState += (float)delta;
-		}
-		else if (Player._velocity.Y < 0)
-		{
-			Player._velocity.Y = 0;
-		}
-
+		
 		// Left/right direction
    		var input = Input.GetActionStrength("right") - Input.GetActionStrength("left");
 		

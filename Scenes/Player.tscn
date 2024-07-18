@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://cyka3f0bldk4q"]
+[gd_scene load_steps=38 format=3 uid="uid://cyka3f0bldk4q"]
 
 [ext_resource type="Script" path="res://Scripts/Player/Player.cs" id="1_qx2n6"]
 [ext_resource type="Texture2D" uid="uid://ohuxtxs031kh" path="res://Assets/sprites/knight.png" id="2_bptn7"]
@@ -7,6 +7,23 @@
 [ext_resource type="Script" path="res://Scripts/Player/States/PlayerMove.cs" id="5_c68br"]
 [ext_resource type="Script" path="res://Scripts/Player/States/PlayerFall.cs" id="6_smvos"]
 [ext_resource type="Script" path="res://Scripts/Player/States/PlayerJump.cs" id="7_v3au4"]
+[ext_resource type="Script" path="res://Scripts/Player/States/PlayerAttack.cs" id="8_dcp65"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ltlx"]
+atlas = ExtResource("2_bptn7")
+region = Rect2(0, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_td5ku"]
+atlas = ExtResource("2_bptn7")
+region = Rect2(32, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dqirg"]
+atlas = ExtResource("2_bptn7")
+region = Rect2(64, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cemsh"]
+atlas = ExtResource("2_bptn7")
+region = Rect2(96, 192, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bvxy7"]
 atlas = ExtResource("2_bptn7")
@@ -100,6 +117,23 @@ region = Rect2(224, 64, 32, 32)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_7ltlx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_td5ku")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dqirg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cemsh")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_bvxy7")
 }, {
 "duration": 1.0,
@@ -188,6 +222,9 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_a3lns"]
 size = Vector2(11, 16)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_d7hxx"]
+size = Vector2(13, 8)
+
 [node name="Player" type="CharacterBody2D"]
 position = Vector2(0, -1)
 script = ExtResource("1_qx2n6")
@@ -195,9 +232,9 @@ metadata/_edit_group_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_nvdya")
-animation = &"jump"
-frame = 7
-frame_progress = 1.0
+animation = &"attack"
+frame = 2
+frame_progress = 0.460054
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-0.5, 4)
@@ -221,3 +258,14 @@ script = ExtResource("6_smvos")
 
 [node name="PlayerJump" type="Node" parent="StateMachine"]
 script = ExtResource("7_v3au4")
+
+[node name="PlayerAttack" type="Node" parent="StateMachine"]
+script = ExtResource("8_dcp65")
+
+[node name="Sword" type="Area2D" parent="."]
+
+[node name="AttackArea" type="CollisionShape2D" parent="Sword"]
+position = Vector2(12.5, 5)
+shape = SubResource("RectangleShape2D_d7hxx")
+disabled = true
+debug_color = Color(0.72921, 0.415574, 0.604522, 0.42)

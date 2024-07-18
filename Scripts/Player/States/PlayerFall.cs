@@ -27,17 +27,25 @@ public partial class PlayerFall : State
 		if (Player.IsOnFloor())
 		{
 			Player._velocity.Y = 0;
-			GD.Print(Player.GetVelocityInProcess());
 		}
-	}
-
-	public override void HandleInput(InputEvent @event)
-	{
 	}
 
 	public override void Update(double delta)
 	{
-		AnimatedSprite.FlipH = Player.Velocity.X < 0;
+		// Flip sprite if going left
+		AnimatedSprite.FlipH = Player._velocity.X < 0;
+
+		// Idle if land on floor
+		if (Player.IsOnFloor())
+		{
+			fsm.TransitionTo("PlayerIdle");
+		}
+
+		// Can attack while falling
+		if (Input.IsActionJustPressed("attack"))
+		{
+			fsm.TransitionTo("PlayerAttack");
+		}
 	}
 	
 	public override void PhysicsUpdate(double delta)

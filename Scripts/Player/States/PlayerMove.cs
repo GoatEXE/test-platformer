@@ -1,6 +1,5 @@
 using Godot;
 using System;
-using System.Runtime.CompilerServices;
 
 public partial class PlayerMove : State
 {
@@ -28,13 +27,26 @@ public partial class PlayerMove : State
 
 	public override void Update(double delta)
 	{
-		AnimatedSprite.FlipH = Player.Velocity.X < 0;
+		// Flip sprite if going left
+		AnimatedSprite.FlipH = Player._velocity.X < 0;
+
+		// Jump State
+		if (Input.IsActionJustPressed("jump"))
+		{
+			fsm.TransitionTo("PlayerJump");
+		}
+
+		// Attack State
+		if (Input.IsActionJustPressed("attack"))
+		{
+			fsm.TransitionTo("PlayerAttack");
+		}
+
 	}
 
 	public override void PhysicsUpdate(double delta)
 	{
 		var input = Input.GetActionStrength("right") - Input.GetActionStrength("left");
-		GD.Print(Player.GetVelocityInProcess());
 
 		if (input != 0)
 		{
@@ -44,11 +56,7 @@ public partial class PlayerMove : State
 		else
 		{
 			Player._velocity.X = 0;
-		}
-
-		if (Input.IsActionJustPressed("jump"))
-		{
-			Player.fsm.TransitionTo("PlayerJump");
+			fsm.TransitionTo("PlayerIdle");
 		}
 
 		// Velocity and Move
